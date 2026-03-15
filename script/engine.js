@@ -16,8 +16,6 @@ function generateEvents(state) {
 
 function runChallenge(state) {
   const winner = randomItem(state.tribes);
-  state.safeTribe = winner.name;
-
   return {
     type: "Immunity Challenge",
     winner: winner.name
@@ -36,17 +34,12 @@ function generatePostChallengeEvents(state) {
   return randomItem(events);
 }
 
-function runElimination(state) {
-  const losingTribe = state.tribes.find(t => t.name !== state.safeTribe);
-
-  if (!losingTribe) {
-    return { tribe: null, eliminated: null };
-  }
+function runElimination(state, safeTribeName) {
+  const losingTribe = state.tribes.find(t => t.name !== safeTribeName);
+  if (!losingTribe) return { tribe: null, eliminated: null };
 
   const eligible = losingTribe.members.filter(p => !p.eliminated);
-  if (eligible.length === 0) {
-    return { tribe: losingTribe.name, eliminated: null };
-  }
+  if (eligible.length === 0) return { tribe: losingTribe.name, eliminated: null };
 
   const eliminated = randomItem(eligible);
   eliminated.eliminated = true;
@@ -63,13 +56,6 @@ function updateTrackRecords(state) {
       p.track.episodesSurvived++;
     }
   });
-
-  return state.cast.map(p => ({
-    name: p.name,
-    tribe: p.tribe,
-    eliminated: p.eliminated,
-    survived: p.track.episodesSurvived
-  }));
 }
 
 function runEpisode(state) {
@@ -78,20 +64,25 @@ function runEpisode(state) {
   const remaining = state.cast.filter(p => !p.eliminated);
   if (remaining.length <= 1) {
     state.finished = true;
+    saveState(state);
     return null;
   }
 
-  const episode = {
-    number: state.episodes.length + 1,
-    events: generateEvents(state),
-    challenge: runChallenge(state),
-    postEvents: generatePostChallengeEvents(state),
-    elimination: null,
-    track: null
-  };
+  const epNum = state.episodes.length + 1;
+  const events = generateEvents(state);
+  const challenge = runChallenge(state);
+  const postEvents = generatePostChallengeEvents(state);
+  const elimination = runElimination(state, challenge.winner);
 
-  episode.elimination = runElimination(state);
-  episode.track = updateTrackRecords(state);
+  updateTrackRecords(state);
+
+  const episode = {
+    number: epNum,
+    events,
+    challenge,
+    postEvents,
+    elimination
+  };
 
   state.episodes.push(episode);
 
@@ -100,6 +91,7 @@ function runEpisode(state) {
     state.finished = true;
   }
 
+  saveState(state);
   return episode;
 }
 
