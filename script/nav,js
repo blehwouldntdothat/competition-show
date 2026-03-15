@@ -1,0 +1,44 @@
+function loadSidebar(currentPage) {
+  const sidebar = document.getElementById("sidebar");
+  const state = getState();
+
+  sidebar.innerHTML = `
+    <h2>Episodes</h2>
+    <div id="episode-list"></div>
+    <hr>
+    <nav>
+      <a href="cast.html"${currentPage === "cast" ? ' style="font-weight:bold;"' : ""}>Cast</a>
+      <a href="summary.html"${currentPage === "summary" ? ' style="font-weight:bold;"' : ""}>Season Summary</a>
+      <a href="settings.html"${currentPage === "settings" ? ' style="font-weight:bold;"' : ""}>Settings</a>
+    </nav>
+  `;
+
+  const list = sidebar.querySelector("#episode-list");
+
+  state.episodes.forEach((ep, i) => {
+    const div = document.createElement("div");
+    div.className = "episode-link";
+    if (currentPage === "episode") {
+      const view = parseInt(localStorage.getItem("viewEpisode") || "-1", 10);
+      if (view === i) div.classList.add("current");
+    }
+    div.textContent = `Episode ${i + 1}`;
+    div.onclick = () => {
+      localStorage.setItem("viewEpisode", i);
+      window.location.href = "episode.html";
+    };
+    list.appendChild(div);
+  });
+
+  // "Present" episode shortcut
+  if (state.episodes.length > 0) {
+    const present = document.createElement("div");
+    present.className = "episode-link";
+    present.textContent = "Go to latest episode";
+    present.onclick = () => {
+      localStorage.setItem("viewEpisode", state.episodes.length - 1);
+      window.location.href = "episode.html";
+    };
+    list.appendChild(present);
+  }
+}
