@@ -1,0 +1,94 @@
+body {
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+}
+
+a {
+  color: #66b3ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#sidebar {
+  width: 260px;
+  background: #1a1a1a;
+  border-right: 2px solid #333;
+  overflow-y: auto;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+#sidebar h2 {
+  margin-top: 0;
+}
+
+#sidebar .episode-link {
+  padding: 8px;
+  margin: 5px 0;
+  background: #222;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#sidebar .episode-link:hover {
+  background: #333;
+}
+
+#sidebar .episode-link.current {
+  border: 1px solid #66b3ff;
+}
+
+#sidebar nav a {
+  display: block;
+  margin: 4px 0;
+}
+
+#content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 8px 16px;
+  margin: 5px 5px 5px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 150px);
+  gap: 20px;
+  justify-content: flex-start;
+}
+
+.player-card {
+  text-align: center;
+}
+
+.player-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 3px solid #333;
+  background: #555;
+}
+
+.player-name {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+pre {
+  white-space: pre-wrap;
+}
